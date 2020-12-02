@@ -1,0 +1,7 @@
+domain: kruise_trait.v1
+repo: kruise_trait
+resources:
+- group: clonesettrait
+  kind: Trait
+  version: v1
+version: "2"

@@ -1,0 +1,24 @@
+# permissions for end users to edit traits.
+apiVersion: rbac.authorization.k8s.io/v1alpha1
+kind: ClusterRole
+metadata:
+  name: trait-editor-role
+rules:
+- apiGroups:
+  - clonesettrait.kruise_trait.v1alpha1
+  resources:
+  - traits
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - clonesettrait.kruise_trait.v1alpha1
+  resources:
+  - traits/status
+  verbs:
+  - get
