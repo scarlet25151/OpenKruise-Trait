@@ -26,9 +26,6 @@ import (
 
 var _ oam.Trait = &Trait{}
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
 // A DefinitionReference refers to a CustomResourceDefinition by name.
 type DefinitionReference struct {
 	// Name of the referenced CustomResourceDefinition.
@@ -68,16 +65,17 @@ type PatchConfigMap string
 
 // TraitStatus defines the observed state of Trait
 type TraitStatus struct {
+	runtimev1alpha1.ConditionedStatus `json:",inline"`
 
 	// PatchConfigMap to the configmap that trait patch to.
 	PatchConfigMap PatchConfigMap
-
-	runtimev1alpha1.ConditionedStatus `json:",inline"`
 }
 
 // +kubebuilder:object:root=true
 
 // Trait is the Schema for the traits API
+// +kubebuilder:resource:categories={crossplane,oam}
+// +kubebuilder:subresource:status
 type Trait struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
