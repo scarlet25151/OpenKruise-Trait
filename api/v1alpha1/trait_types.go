@@ -96,3 +96,12 @@ type TraitList struct {
 func init() {
 	SchemeBuilder.Register(&Trait{}, &TraitList{})
 }
+
+func (in *TraitSpec) DeepCopyInto(out *TraitSpec) {
+	in = out
+}
+
+func (in *TraitStatus) DeepCopyInto(out *TraitStatus) {
+	*out = *in
+	in.ConditionedStatus.DeepCopyInto(&out.ConditionedStatus)
+}
