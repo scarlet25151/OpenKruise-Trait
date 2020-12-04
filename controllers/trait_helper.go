@@ -22,8 +22,9 @@ const (
 	cloneSet            = "CloneSet"
 	advancedStatefulSet = "StatefulSet"
 	unitedDeployment    = "UnitedDeployment"
-	advancedDaemonSet   = "DaemonSet"
-	sidecarSet          = "SidecarSet"
+
+	updateStrategy = "updateStrategy"
+	scaleStrategy  = "scaleStrategy"
 )
 
 var (
@@ -68,8 +69,11 @@ func (r *TraitReconciler) renderConfigMaps(tr v1alpha1.Trait, obj oam.Object) (*
 		if err = json.Unmarshal(bts, &cs); err != nil {
 			return nil, err
 		}
-		jsonProperties, err = json.Marshal(tr.Spec.CloneSetSpec)
-		configMapBinaryData[cloneSet] = jsonProperties
+		scaleProperties, _ := json.Marshal(tr.Spec.CloneSetScaleStrategy)
+		jsonProperties, _ := json.Marshal(tr.Spec.CloneSetUpdateStrategy)
+		configMapBinaryData[scaleStrategy] = scaleProperties
+		configMapBinaryData[updateStrategy] = jsonProperties
+
 		cm := &corev1.ConfigMap{
 
 			TypeMeta: metav1.TypeMeta{
@@ -91,8 +95,8 @@ func (r *TraitReconciler) renderConfigMaps(tr v1alpha1.Trait, obj oam.Object) (*
 		if err = json.Unmarshal(bts, &ss); err != nil {
 			return nil, err
 		}
-		jsonProperties, err = json.Marshal(tr.Spec.AdvancedStatefulSetTemplateSpec)
-		configMapBinaryData[advancedStatefulSet] = jsonProperties
+		jsonProperties, err = json.Marshal(tr.Spec.StatefulSetUpdateStrategy)
+		configMapBinaryData[scaleStrategy] = jsonProperties
 		cm := &corev1.ConfigMap{
 
 			TypeMeta: metav1.TypeMeta{
@@ -113,8 +117,8 @@ func (r *TraitReconciler) renderConfigMaps(tr v1alpha1.Trait, obj oam.Object) (*
 		if err = json.Unmarshal(bts, &ud); err != nil {
 			return nil, err
 		}
-		jsonProperties, err = json.Marshal(tr.Spec.AdvancedStatefulSetTemplateSpec)
-		configMapBinaryData[advancedStatefulSet] = jsonProperties
+		jsonProperties, err = json.Marshal(tr.Spec.UnitedDeploymentUpdateStrategy)
+		configMapBinaryData[updateStrategy] = jsonProperties
 		cm := &corev1.ConfigMap{
 
 			TypeMeta: metav1.TypeMeta{

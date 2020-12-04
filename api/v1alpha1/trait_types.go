@@ -44,16 +44,17 @@ type TraitSpec struct {
 	// ReplicaCount of the workload this trait applies to.
 	ReplicaCount int32
 
-	// CloneSetSpec defined the desird state of CloneSet
-	CloneSetSpec v1alpha1.CloneSetSpec
+	// CloneSetScaleStrategy defined the scale strategy of cloneSet
+	CloneSetScaleStrategy v1alpha1.CloneSetScaleStrategy
 
-	v1alpha1.AdvancedStatefulSetTemplateSpec
+	// CloneSetUpdateStrategy defined the update strategy of cloneSet
+	CloneSetUpdateStrategy v1alpha1.CloneSetUpdateStrategy
 
-	v1alpha1.UnitedDeploymentSpec
+	// StatefulSetUpdateStrategy defined the update strategy of statefulSet
+	StatefulSetUpdateStrategy v1alpha1.StatefulSetUpdateStrategy
 
-	v1alpha1.SidecarSetSpec
-
-	v1alpha1.DaemonSetSpec
+	// UnitedDeploymentUpdateStrategy defined the update strategy of united deployment
+	UnitedDeploymentUpdateStrategy v1alpha1.UnitedDeploymentUpdateStrategy
 
 	// WorkloadReference to the workload this trait applies to.
 	WorkloadReference runtimev1alpha1.TypedReference `json:"workloadRef"`
@@ -67,12 +68,10 @@ type PatchConfigMap string
 
 // TraitStatus defines the observed state of Trait
 type TraitStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+
 	// PatchConfigMap to the configmap that trait patch to.
 	PatchConfigMap PatchConfigMap
 
-	//
 	runtimev1alpha1.ConditionedStatus `json:",inline"`
 }
 
