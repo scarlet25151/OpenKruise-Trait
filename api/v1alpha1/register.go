@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	Group   = "clonesettrait.kruise_trait.v1alpha1"
-	Version = "v1alpha1"
+	Group   = "core.oam.dev.v1alpha1"
+	Version = "v1alpha2"
 )
 
 var (
