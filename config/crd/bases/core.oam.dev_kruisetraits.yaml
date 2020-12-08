@@ -576,6 +576,7 @@ spec:
                     Default is RollingUpdate.
                   type: string
               type: object
+          type: object
       type: object
   version: v1alpha1
   versions:
