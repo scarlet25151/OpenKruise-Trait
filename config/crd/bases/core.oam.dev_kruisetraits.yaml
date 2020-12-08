@@ -47,14 +47,14 @@ spec:
             cloneSetScaleStrategy:
               description: ScaleStrategy indicates the ScaleStrategy that will be
                 employed to create and delete Pods in the CloneSet.
-                properties:
-                  podsToDelete:
-                    description: PodsToDelete is the names of Pod should be deleted.
-                      Note that this list will be truncated for non-existing pod names.
-                    items:
-                      type: string
-                    type: array
-                type: object
+              properties:
+                podsToDelete:
+                  description: PodsToDelete is the names of Pod should be deleted.
+                    Note that this list will be truncated for non-existing pod names.
+                  items:
+                    type: string
+                  type: array
+              type: object
             cloneSetUpdateStrategy:
               description: UpdateStrategy indicates the UpdateStrategy that will be
                 employed to update Pods in the CloneSet when a revision is made to
