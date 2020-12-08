@@ -7,7 +7,7 @@ import (
 
 const (
 	Group   = "core.oam.dev"
-	Version = "v1alpha2"
+	Version = "v1alpha1"
 )
 
 var (
