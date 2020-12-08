@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	Group   = "core.oam.dev.v1alpha1"
+	Group   = "core.oam.dev"
 	Version = "v1alpha2"
 )
 
