@@ -66,7 +66,7 @@ func main() {
 		os.Exit(1)
 	}
 	if err := controllers.Setup(mgr); err != nil {
-		setupLog.Error(err, "unable to start manager")
+		setupLog.Error(err, "unable to setup manager")
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder

@@ -18,6 +18,7 @@ package v1alpha1
 
 import (
 	runtimev1alpha1 "github.com/crossplane/crossplane-runtime/apis/core/v1alpha1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/crossplane/oam-kubernetes-runtime/pkg/oam"
@@ -61,14 +62,15 @@ type TraitSpec struct {
 	RevisionEnabled bool `json:"revisionEnabled,omitempty"`
 }
 
-type PatchConfigMap string
-
 // TraitStatus defines the observed state of KruiseTrait
 type TraitStatus struct {
 	runtimev1alpha1.ConditionedStatus `json:",inline"`
 
 	// PatchConfigMap to the configmap that trait patch to.
-	PatchConfigMap PatchConfigMap
+	PatchConfigMap []*corev1.ConfigMap
+
+	// Resources managed by this service trait
+	Resources []runtimev1alpha1.TypedReference `json:"resources,omitempty"`
 }
 
 // +kubebuilder:object:root=true

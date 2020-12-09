@@ -55,9 +55,6 @@ type TraitReconciler struct {
 	dm     discoverymapper.DiscoveryMapper
 }
 
-// +kubebuilder:rbac:groups=clonesettrait.kruise_trait.v1alpha1,resources=traits,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=clonesettrait.kruise_trait.v1alpha1,resources=traits/status,verbs=get;update;patch
-
 func Setup(mgr ctrl.Manager) error {
 	dm, err := discoverymapper.New(mgr.GetConfig())
 	if err != nil {
@@ -74,19 +71,25 @@ func Setup(mgr ctrl.Manager) error {
 	return reconciler.SetupWithManager(mgr)
 }
 
+// +kubebuilder:rbac:groups=core.oam.dev,resources=kruisetraits,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=core.oam.dev.v1alpha1,resources=kruisetraits/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=apps.kruise.io,resources=clonesets,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=apps.kruise.io,resources=clonesets/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=apps.kruise.io,resources=statefulsets,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=apps.kruise.io,resources=statefulsets/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=apps.kruise.io,resources=uniteddeployments,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=apps.kruise.io,resources=uniteddeployments/status,verbs=get;update;patch
 func (r *TraitReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	ctx := context.Background()
 	mLog := r.log.WithValues("trait", req.NamespacedName)
 
 	mLog.Info("reconcile to configmap")
 
-	var (
-		trait kruisetraitv1.KruiseTrait
-	)
-
+	var trait kruisetraitv1.KruiseTrait
 	if err := r.Get(ctx, req.NamespacedName, &trait); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
+
 	// Fetch applicationConfiguration
 	eventObj, err := util.LocateParentAppConfig(ctx, r.Client, &trait)
 	if eventObj == nil {
@@ -128,6 +131,18 @@ func (r *TraitReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		r.record.Event(eventObj, event.Normal("ConfigMap created",
 			fmt.Sprintf("Workload `%s` successfully server side patched a configmap `%s`",
 				workload.GetName(), cm.Name)))
+	}
+	// record the configmaps
+	trait.Status.PatchConfigMap = configMaps
+
+	trait.Status.Resources = nil
+	for _, cm := range configMaps {
+		trait.Status.Resources = append(trait.Status.Resources, cpv1alpha1.TypedReference{
+			APIVersion: cm.GetObjectKind().GroupVersionKind().GroupVersion().String(),
+			Kind:       cm.GetObjectKind().GroupVersionKind().Kind,
+			Name:       cm.GetName(),
+			UID:        cm.GetUID(),
+		})
 	}
 
 	return ctrl.Result{}, util.PatchCondition(ctx, r, &trait, cpv1alpha1.ReconcileSuccess())
