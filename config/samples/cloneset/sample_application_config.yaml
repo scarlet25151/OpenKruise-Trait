@@ -7,13 +7,13 @@ spec:
     - componentName: example-cloneset
       traits:
         - trait:
-          apiVersion: core.oam.dev/v1alpha2
-          kind: KruiseTrait
-          metadata:
-            name: example-kruise-trait
-          spec:
-            replicas: 5
-            updateStrategy:
-              type: InPlaceIfPossible
-              inPlaceUpdateStrategy:
-                gracePeriodSeconds: 20
+            apiVersion: core.oam.dev/v1alpha2
+            kind: KruiseTrait
+            metadata:
+              name: example-kruise-trait
+            spec:
+              replicas: 5
+              updateStrategy:
+                type: InPlaceIfPossible
+                inPlaceUpdateStrategy:
+                  gracePeriodSeconds: 20

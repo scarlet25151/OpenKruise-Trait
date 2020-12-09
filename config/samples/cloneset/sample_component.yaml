@@ -11,7 +11,6 @@ spec:
         app: sample
       name: sample
     spec:
-      replicas: 5
       selector:
         matchLabels:
           app: sample
