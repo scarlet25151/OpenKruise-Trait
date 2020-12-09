@@ -24,7 +24,7 @@ import (
 	"github.com/openkruise/kruise-api/apps/v1alpha1"
 )
 
-var _ oam.Trait = &Trait{}
+var _ oam.Trait = &KruiseTrait{}
 
 // A DefinitionReference refers to a CustomResourceDefinition by name.
 type DefinitionReference struct {
@@ -36,7 +36,7 @@ type DefinitionReference struct {
 	Version string `json:"version,omitempty"`
 }
 
-// TraitSpec defines the desired state of Trait
+// TraitSpec defines the desired state of KruiseTrait
 type TraitSpec struct {
 	// ReplicaCount of the workload this trait applies to.
 	ReplicaCount int32
@@ -63,7 +63,7 @@ type TraitSpec struct {
 
 type PatchConfigMap string
 
-// TraitStatus defines the observed state of Trait
+// TraitStatus defines the observed state of KruiseTrait
 type TraitStatus struct {
 	runtimev1alpha1.ConditionedStatus `json:",inline"`
 
@@ -73,10 +73,10 @@ type TraitStatus struct {
 
 // +kubebuilder:object:root=true
 
-// Trait is the Schema for the traits API
+// KruiseTrait is the Schema for the traits API
 // +kubebuilder:resource:categories={crossplane,oam}
 // +kubebuilder:subresource:status
-type Trait struct {
+type KruiseTrait struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
@@ -86,15 +86,15 @@ type Trait struct {
 
 // +kubebuilder:object:root=true
 
-// TraitList contains a list of Trait
+// TraitList contains a list of KruiseTrait
 type TraitList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []Trait `json:"items"`
+	Items           []KruiseTrait `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&Trait{}, &TraitList{})
+	SchemeBuilder.Register(&KruiseTrait{}, &TraitList{})
 }
 
 func (in *TraitSpec) DeepCopyInto(out *TraitSpec) {

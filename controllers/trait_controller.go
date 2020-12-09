@@ -34,7 +34,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	clonesettraitv1 "kruise_trait/api/v1alpha1"
+	kruisetraitv1 "kruise_trait/api/v1alpha1"
 )
 
 const (
@@ -45,7 +45,7 @@ const (
 	errApplyConfigMap = "cannot apply configmap"
 )
 
-// TraitReconciler reconciles a Trait object
+// TraitReconciler reconciles a KruiseTrait object
 type TraitReconciler struct {
 	client.Client
 	discovery.DiscoveryClient
@@ -66,8 +66,8 @@ func Setup(mgr ctrl.Manager) error {
 	reconciler := TraitReconciler{
 		Client:          mgr.GetClient(),
 		DiscoveryClient: *discovery.NewDiscoveryClientForConfigOrDie(mgr.GetConfig()),
-		log:             ctrl.Log.WithName("Trait"),
-		record:          event.NewAPIRecorder(mgr.GetEventRecorderFor("Trait")),
+		log:             ctrl.Log.WithName("KruiseTrait"),
+		record:          event.NewAPIRecorder(mgr.GetEventRecorderFor("KruiseTrait")),
 		Scheme:          mgr.GetScheme(),
 		dm:              dm,
 	}
@@ -81,7 +81,7 @@ func (r *TraitReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	mLog.Info("reconcile to configmap")
 
 	var (
-		trait clonesettraitv1.Trait
+		trait kruisetraitv1.KruiseTrait
 	)
 
 	if err := r.Get(ctx, req.NamespacedName, &trait); err != nil {
@@ -133,7 +133,7 @@ func (r *TraitReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	return ctrl.Result{}, util.PatchCondition(ctx, r, &trait, cpv1alpha1.ReconcileSuccess())
 }
 
-func (r *TraitReconciler) createConfigmap(ctx context.Context, tr clonesettraitv1.Trait,
+func (r *TraitReconciler) createConfigmap(ctx context.Context, tr kruisetraitv1.KruiseTrait,
 	resources []*unstructured.Unstructured) ([]*corev1.ConfigMap, error) {
 	var newConfigMap []*corev1.ConfigMap
 
@@ -152,6 +152,6 @@ func (r *TraitReconciler) createConfigmap(ctx context.Context, tr clonesettraitv
 
 func (r *TraitReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&clonesettraitv1.Trait{}).
+		For(&kruisetraitv1.KruiseTrait{}).
 		Complete(r)
 }

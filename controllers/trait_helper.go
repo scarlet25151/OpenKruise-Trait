@@ -52,7 +52,7 @@ func DetermineWorkloadType(ctx context.Context, logger logr.Logger,
 	}
 }
 
-func (r *TraitReconciler) renderConfigMaps(tr v1alpha1.Trait, obj oam.Object) (*corev1.ConfigMap, error) {
+func (r *TraitReconciler) renderConfigMaps(tr v1alpha1.KruiseTrait, obj oam.Object) (*corev1.ConfigMap, error) {
 
 	var (
 		jsonProperties      = []byte(nil)
