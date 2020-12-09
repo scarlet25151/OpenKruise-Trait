@@ -86,15 +86,15 @@ type KruiseTrait struct {
 
 // +kubebuilder:object:root=true
 
-// TraitList contains a list of KruiseTrait
-type TraitList struct {
+// KruiseTraitList contains a list of KruiseTrait
+type KruiseTraitList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []KruiseTrait `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&KruiseTrait{}, &TraitList{})
+	SchemeBuilder.Register(&KruiseTrait{}, &KruiseTraitList{})
 }
 
 func (in *TraitSpec) DeepCopyInto(out *TraitSpec) {
