@@ -4,22 +4,22 @@ metadata:
   name: example-cloneset
 spec:
   workload:
-    apiVersion: apps/v1
+    apiVersion: apps.kruise.io/v1alpha1
     kind: CloneSet
     metadata:
-      name: web
+      labels:
+        app: sample
+      name: sample
     spec:
+      replicas: 5
       selector:
         matchLabels:
-          app: test
+          app: sample
       template:
         metadata:
           labels:
-            app: test
+            app: sample
         spec:
           containers:
-            - name: nginx
-              image: nginx:1.17
-              ports:
-                - containerPort: 80
-                  name: web
+            - name: main
+              image: nginx:alpine
