@@ -1,0 +1,26 @@
+apiVersion: core.oam.dev/v1alpha2
+kind: Component
+metadata:
+  name: example-statefulset
+spec:
+  workload:
+    apiVersion: apps.kruise.io/v1alpha1
+    kind: StatefulSet
+    metadata:
+      name: sample
+    spec:
+      serviceName: fake-service
+        selector:
+          matchLabels:
+            app: sample
+      template:
+        metadata:
+          labels:
+            app: sample
+        spec:
+          readinessGates:
+            - conditionType: InPlaceUpdateReady
+          containers:
+            - name: main
+              image: nginx:alpine
+      podManagementPolicy: Parallel

@@ -145,6 +145,10 @@ func (r *TraitReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		})
 	}
 
+	if err := r.Status().Update(ctx, &trait); err != nil {
+		return util.ReconcileWaitResult, err
+	}
+
 	return ctrl.Result{}, util.PatchCondition(ctx, r, &trait, cpv1alpha1.ReconcileSuccess())
 }
 
