@@ -35,6 +35,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	kruisetraitv1 "kruise_trait/api/v1alpha1"
+	ingresstraitv1 "kruise_trait/api/v1alpha2"
 )
 
 const (
@@ -84,6 +85,11 @@ func (r *TraitReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	mLog := r.log.WithValues("trait", req.NamespacedName)
 
 	mLog.Info("reconcile to configmap")
+	var ingressTrait ingresstraitv1.IngressTrait
+	if err := r.Get(ctx, req.NamespacedName, &ingressTrait); err != nil {
+		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
+	mLog.Info("Get the ingress trait", "WorkloadReference", ingressTrait.Spec.WorkloadReference)
 
 	var trait kruisetraitv1.KruiseTrait
 	if err := r.Get(ctx, req.NamespacedName, &trait); err != nil {
