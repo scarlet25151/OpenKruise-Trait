@@ -65,20 +65,10 @@ func main() {
 		setupLog.Error(err, "unable to start manager")
 		os.Exit(1)
 	}
-	//if err := controllers.Setup(mgr); err != nil {
-	//	setupLog.Error(err, "unable to setup manager")
-	//	os.Exit(1)
-	//}
-
-	if err = (&controllers.TraitReconciler{
-		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("KruiseTrait"),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "KruiseTrait")
+	if err := controllers.Setup(mgr); err != nil {
+		setupLog.Error(err, "unable to setup manager")
 		os.Exit(1)
 	}
-
 	// +kubebuilder:scaffold:builder
 	setupLog.Info("starting manager")
 	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
