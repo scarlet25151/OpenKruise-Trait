@@ -50,27 +50,27 @@ const (
 type TraitReconciler struct {
 	client.Client
 	discovery.DiscoveryClient
-	log    logr.Logger
+	Log    logr.Logger
 	record event.Recorder
 	Scheme *runtime.Scheme
 	dm     discoverymapper.DiscoveryMapper
 }
 
-func Setup(mgr ctrl.Manager) error {
-	dm, err := discoverymapper.New(mgr.GetConfig())
-	if err != nil {
-		return err
-	}
-	reconciler := TraitReconciler{
-		Client:          mgr.GetClient(),
-		DiscoveryClient: *discovery.NewDiscoveryClientForConfigOrDie(mgr.GetConfig()),
-		log:             ctrl.Log.WithName("KruiseTrait"),
-		record:          event.NewAPIRecorder(mgr.GetEventRecorderFor("KruiseTrait")),
-		Scheme:          mgr.GetScheme(),
-		dm:              dm,
-	}
-	return reconciler.SetupWithManager(mgr)
-}
+//func Setup(mgr ctrl.Manager) error {
+//	dm, err := discoverymapper.New(mgr.GetConfig())
+//	if err != nil {
+//		return err
+//	}
+//	reconciler := TraitReconciler{
+//		Client:          mgr.GetClient(),
+//		DiscoveryClient: *discovery.NewDiscoveryClientForConfigOrDie(mgr.GetConfig()),
+//		log:             ctrl.Log.WithName("KruiseTrait"),
+//		record:          event.NewAPIRecorder(mgr.GetEventRecorderFor("KruiseTrait")),
+//		Scheme:          mgr.GetScheme(),
+//		dm:              dm,
+//	}
+//	return reconciler.SetupWithManager(mgr)
+//}
 
 // +kubebuilder:rbac:groups=core.oam.dev,resources=kruisetraits,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=core.oam.dev.v1alpha1,resources=kruisetraits/status,verbs=get;update;patch
@@ -82,7 +82,7 @@ func Setup(mgr ctrl.Manager) error {
 // +kubebuilder:rbac:groups=apps.kruise.io,resources=uniteddeployments/status,verbs=get;update;patch
 func (r *TraitReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	ctx := context.Background()
-	mLog := r.log.WithValues("trait", req.NamespacedName)
+	mLog := r.Log.WithValues("trait", req.NamespacedName)
 
 	mLog.Info("reconcile to configmap")
 	var ingressTrait ingresstraitv1.IngressTrait
@@ -166,7 +166,7 @@ func (r *TraitReconciler) createConfigmap(ctx context.Context, tr kruisetraitv1.
 		if res.GetAPIVersion() == appsv1.SchemeGroupVersion.String() {
 			configMap, err := r.renderConfigMaps(tr, res)
 			if err != nil {
-				r.log.Error(err, "Failed to render configmap")
+				r.Log.Error(err, "Failed to render configmap")
 				return nil, util.PatchCondition(ctx, r, &tr, cpv1alpha1.ReconcileError(errors.Wrap(err, errRenderTrait)))
 			}
 			newConfigMap = append(newConfigMap, configMap)
