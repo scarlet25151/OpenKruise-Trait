@@ -100,10 +100,15 @@ func init() {
 }
 
 func (in *TraitSpec) DeepCopyInto(out *TraitSpec) {
-	in = out
+	*out = *in
 }
 
 func (in *TraitStatus) DeepCopyInto(out *TraitStatus) {
 	*out = *in
 	in.ConditionedStatus.DeepCopyInto(&out.ConditionedStatus)
+	if in.Resources != nil {
+		in, out := &in.Resources, &out.Resources
+		*out = make([]runtimev1alpha1.TypedReference, len(*in))
+		copy(*out, *in)
+	}
 }

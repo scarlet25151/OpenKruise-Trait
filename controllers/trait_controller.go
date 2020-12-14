@@ -35,7 +35,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	kruisetraitv1 "kruise_trait/api/v1alpha1"
-	ingresstraitv1 "kruise_trait/api/v1alpha2"
 )
 
 const (
@@ -82,14 +81,8 @@ func Setup(mgr ctrl.Manager) error {
 // +kubebuilder:rbac:groups=apps.kruise.io,resources=uniteddeployments/status,verbs=get;update;patch
 func (r *TraitReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	ctx := context.Background()
-	mLog := r.log.WithValues("trait", req.NamespacedName)
-
-	mLog.Info("reconcile to configmap")
-	var ingressTrait ingresstraitv1.IngressTrait
-	if err := r.Get(ctx, req.NamespacedName, &ingressTrait); err != nil {
-		return ctrl.Result{}, client.IgnoreNotFound(err)
-	}
-	mLog.Info("Get the ingress trait", "WorkloadReference", ingressTrait.Spec.WorkloadReference)
+	log := r.log.WithValues("kruisetrait", req.NamespacedName)
+	log.Info("Reconcile Kruise Trait")
 
 	var trait kruisetraitv1.KruiseTrait
 	if err := r.Get(ctx, req.NamespacedName, &trait); err != nil {
@@ -99,18 +92,18 @@ func (r *TraitReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	// Fetch applicationConfiguration
 	eventObj, err := util.LocateParentAppConfig(ctx, r.Client, &trait)
 	if eventObj == nil {
-		mLog.Error(err, "Failed to find parent resource", trait.Name)
+		log.Error(err, "Failed to find parent resource", trait.Name)
 		eventObj = &trait
 	}
 
 	// Fetch the workload instance this trait is refer to
-	workload, err := util.FetchWorkload(ctx, r, mLog, &trait)
+	workload, err := util.FetchWorkload(ctx, r, log, &trait)
 	if err != nil {
 		r.record.Event(eventObj, event.Warning(util.ErrLocateWorkload, err))
 		return util.ReconcileWaitResult, util.PatchCondition(
 			ctx, r, &trait, v1alpha1.ReconcileError(errors.Wrap(err, util.ErrLocateWorkload)))
 	}
-	resources, err := DetermineWorkloadType(ctx, mLog, workload, r)
+	resources, err := DetermineWorkloadType(ctx, log, workload, r)
 	if err != nil {
 		r.record.Event(eventObj, event.Warning(util.ErrLocateWorkload, err))
 		return util.ReconcileWaitResult, util.PatchCondition(
@@ -122,14 +115,14 @@ func (r *TraitReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	configMapApplyOpts := []client.PatchOption{client.ForceOwnership, client.FieldOwner(workload.GetUID())}
 	configMaps, err := r.createConfigmap(ctx, trait, resources)
 	if err != nil {
-		mLog.Error(err, "Failed to render configmaps")
+		log.Error(err, "Failed to render configmaps")
 		r.record.Event(eventObj, event.Warning(errRenderWorkload, err))
 		return util.ReconcileWaitResult,
 			util.PatchCondition(ctx, r, &trait, cpv1alpha1.ReconcileError(errors.Wrap(err, errNotWorkload)))
 	}
 	for _, cm := range configMaps {
 		if err := r.Patch(ctx, cm, client.Apply, configMapApplyOpts...); err != nil {
-			mLog.Error(err, "Failed to apply a configmap")
+			log.Error(err, "Failed to apply a configmap")
 			r.record.Event(eventObj, event.Warning(errApplyConfigMap, err))
 			return util.ReconcileWaitResult,
 				util.PatchCondition(ctx, r, &trait, cpv1alpha1.ReconcileError(errors.Wrap(err, errApplyConfigMap)))
