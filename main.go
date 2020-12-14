@@ -18,16 +18,18 @@ package main
 
 import (
 	"flag"
-	"kruise_trait/controllers"
 	"os"
 
+	"github.com/crossplane/oam-kubernetes-runtime/apis/core"
+	"k8s.io/api/networking/v1beta1"
 	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	clonesettraitv1 "kruise_trait/api/v1alpha1"
+	kruisetrait "kruise_trait/api/v1alpha1"
+	"kruise_trait/controllers"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -39,7 +41,11 @@ var (
 func init() {
 	_ = clientgoscheme.AddToScheme(scheme)
 
-	_ = clonesettraitv1.AddToScheme(scheme)
+	_ = kruisetrait.AddToScheme(scheme)
+
+	_ = core.AddToScheme(scheme)
+
+	_ = v1beta1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
 }
 
