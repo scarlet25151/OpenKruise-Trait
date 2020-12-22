@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"reflect"
+
 	"github.com/crossplane/oam-kubernetes-runtime/apis/core/v1alpha2"
 	"github.com/crossplane/oam-kubernetes-runtime/pkg/oam"
 	"github.com/crossplane/oam-kubernetes-runtime/pkg/oam/util"
@@ -13,9 +15,9 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"kruise_trait/api/v1alpha1"
-	"reflect"
 	ctrl "sigs.k8s.io/controller-runtime"
+
+	"kruise_trait/api/v1alpha1"
 )
 
 const (
@@ -52,7 +54,7 @@ func DetermineWorkloadType(ctx context.Context, logger logr.Logger,
 	}
 }
 
-func (r *TraitReconciler) renderConfigMaps(tr v1alpha1.KruiseTrait, obj oam.Object) (*corev1.ConfigMap, error) {
+func (r *TraitReconciler) renderConfigMaps(ctx context.Context, tr v1alpha1.KruiseTrait, obj oam.Object) (*corev1.ConfigMap, error) {
 
 	var (
 		jsonProperties      = []byte(nil)

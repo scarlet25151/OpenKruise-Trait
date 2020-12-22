@@ -19,6 +19,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+
 	"github.com/crossplane/crossplane-runtime/apis/core/v1alpha1"
 	cpv1alpha1 "github.com/crossplane/crossplane-runtime/apis/core/v1alpha1"
 	"github.com/crossplane/crossplane-runtime/pkg/event"
@@ -157,7 +158,7 @@ func (r *TraitReconciler) createConfigmap(ctx context.Context, tr kruisetraitv1.
 
 	for _, res := range resources {
 		if res.GetAPIVersion() == appsv1.SchemeGroupVersion.String() {
-			configMap, err := r.renderConfigMaps(tr, res)
+			configMap, err := r.renderConfigMaps(ctx, tr, res)
 			if err != nil {
 				r.log.Error(err, "Failed to render configmap")
 				return nil, util.PatchCondition(ctx, r, &tr, cpv1alpha1.ReconcileError(errors.Wrap(err, errRenderTrait)))
